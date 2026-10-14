@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PiCards</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14233B;--ice:#EEF3F8;--paper:#fff;--line:#CBD6E2;--red:#C8102E;--gold:#E7A900;--mut:#5B6B80;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#E6EDF5;--ice:#0F1A2A;--paper:#16233A;--line:#2B3C57;--red:#FF5A6E;--gold:#F2B705;--mut:#9AA9BD}}
+:root[data-theme="dark"]{--ink:#E6EDF5;--ice:#0F1A2A;--paper:#16233A;--line:#2B3C57;--red:#FF5A6E;--gold:#F2B705;--mut:#9AA9BD}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ice);color:var(--ink);font:15px/1.45 Barlow,system-ui,sans-serif}
+h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;margin:0;letter-spacing:.2px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-bottom:3px solid var(--red);background:var(--paper)}
+h1{font-size:30px}
+main{display:grid;grid-template-columns:240px 1fr;gap:16px;padding:16px;max-width:1200px;margin:auto}
+#list{display:flex;flex-direction:column;gap:6px}
+.ci{text-align:left;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--line);padding:8px 10px;border-radius:4px;color:var(--ink);cursor:pointer;font:inherit;display:flex;flex-direction:column}
+.ci.on{border-left-color:var(--red)}.ci span,.mut,small{color:var(--mut);font-size:13px}
+button{font:inherit;cursor:pointer;border-radius:4px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 12px}
+button.p{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.ic{padding:0 6px;border:0;background:none;color:var(--mut)}.pl{display:flex;gap:6px;margin:4px 0}.pl input{flex:1}.sp{border-top:1px solid var(--line);padding:8px 0}.in{margin-left:18px}.pl select{max-width:150px}
+.vh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.vh h2{font-size:28px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0}
+.tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;font-weight:600}
+.tabs button.on{border-bottom-color:var(--red)}
+.sub{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px;margin-bottom:12px}
+.sub h3{font-size:20px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}.tg{font:13px Barlow,sans-serif;margin-left:auto}
+.sc{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%}
+th,td{padding:4px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--mut);font-weight:600}.pc{text-align:center;min-width:64px;user-select:none;-webkit-user-select:none}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--red)}
+input,select,textarea{font:inherit;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:5px 8px}
+input.nm{width:80px}textarea{width:100%;min-height:130px}
+label.f{display:block;margin:8px 0 2px;font-weight:600}.f+input,.f+select{width:100%}
+dialog{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:8px;width:min(520px,94vw)}
+#msg{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:4px}
+.box{background:var(--paper);border:1px dashed var(--line);border-radius:6px;padding:20px}
+#pa{display:none}
+@media (max-width:760px){main{grid-template-columns:1fr}#list{flex-direction:row;overflow-x:auto}.ci{min-width:170px}}
+@media print{
+:root{padding:0}@page{size:letter;margin:.5in}
+body{background:#fff}body>*:not(#pa){display:none!important}
+#pa{display:block;color:#000;background:#fff;font-family:Arial,sans-serif}
+#pa h1{font-size:16pt}#pa .sb{font-size:9pt;margin-bottom:6px}
+#pa h2{font-size:11pt;border-bottom:1px solid #000;margin:10px 0 4px;break-after:avoid}
+.lg{font-size:7.5pt;margin-bottom:3px}
+.cp{column-count:3;column-gap:14px;font-size:7.5pt}.cp.c2{column-count:2}
+.cp div{break-inside:avoid;white-space:nowrap;overflow:hidden;line-height:1.55}
+.bx{display:inline-block;width:7px;height:7px;border:1px solid #000;margin-right:2px;vertical-align:middle;font:7px/7px Arial;text-align:center;font-style:normal}
+.pt{font-size:9pt}.pt th,.pt td{border:1px solid #888;padding:1px 4px;color:#000}
+.pt .bx{width:11px;height:11px;line-height:11px;font-size:10px;margin:0}.ctr{text-align:center}
+th.v{writing-mode:vertical-rl;transform:rotate(180deg);height:80px;font-weight:400;font-size:8pt}
+}
+</style><script src="https://accounts.google.com/gsi/client" async defer></script>
+</head><body>
+<header><h1>PiCards</h1><div class="bar" style="margin:0"><button class="p" data-a="new">Nouvelle collection</button><button id="gds" data-a="gd">Drive : non connecté</button><button data-a="data">Données</button></div></header>
+<main><nav id="list"></nav><section id="view"></section></main>
+<dialog id="dlg"></dialog><div id="msg" hidden></div><div id="pa"></div>
+<script>
+const K='picards.v1';let db={cols:[]},cur=null,tab='chk',delArm=false,arm=null,lastSub='';
+try{const s=localStorage.getItem(K);if(s)db=JSON.parse(s)}catch(e){}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
+const persist=()=>{try{localStorage.setItem(K,JSON.stringify(db))}catch(e){}};
+const save=()=>{db.updated=Date.now();persist();gdSchedule()};
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9),money=n=>'$'+(+n||0).toFixed(2);
+const MINP=.25,CONDS=['M','NM','EX','VG','G','P'],TYPES={hockey:['Hockey','joueur','équipe'],marvel:['Marvel','personnage','artiste'],autre:['Autre','nom','note']};
+const col=()=>db.cols.find(c=>c.id===cur);
+const mig=c=>c.subs.forEach(s=>{if(!s.pars){s.pars=s.par?[...(c.pars||[])]:[];delete s.par}});
+const pars=(c,s)=>['Base',...s.pars];
+const cardsOf=(c,s)=>c.cards.filter(x=>x.s===s.name).sort((a,b)=>a.n.localeCompare(b.n,undefined,{numeric:true}));
+const total=c=>c.subs.reduce((a,s)=>a+cardsOf(c,s).length*pars(c,s).length,0);
+function entries(c){const o=[];c.subs.forEach(s=>cardsOf(c,s).forEach(x=>pars(c,s).forEach(p=>{const e=c.own[x.id+'|'+p];if(e)o.push({k:x.id+'|'+p,x,p,s,e})})));return o}
+const dbl=c=>entries(c).filter(r=>r.e.q>1);
+const tot=c=>{const E=entries(c);return `${E.reduce((a,r)=>a+r.e.q,0)} exemplaires · valeur estimée ${money(E.reduce((a,r)=>a+r.e.q*r.e.p,0))}`};
+const nm=r=>`${esc(r.s.name)} #${esc(r.x.n)} ${esc(r.x.m)}${r.p==='Base'?'':' <small>'+esc(r.p)+'</small>'}`;
+function armed(t,k){if(arm===k){arm=null;return true}arm=k;t.textContent='Confirmer';t.classList.add('p');return false}
+function toast(t){const m=$('#msg');m.textContent=t;m.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>m.hidden=true,2500)}
+function renderList(){$('#list').innerHTML=db.cols.map(c=>`<button class="ci ${c.id===cur?'on':''}" data-c="${c.id}"><b>${esc(c.name)}</b><span>${esc(c.year)} · ${entries(c).length}/${total(c)}</span></button>`).join('')||'<p class="mut">Aucune collection.</p>'}
+function render(){arm=null;renderList();const c=col(),v=$('#view');
+if(!c){v.innerHTML=`<div class="box"><h2>Crée ta première collection</h2><p>Une collection regroupe une série (ex. Young Guns, Marvel Annual), ses sous-séries et ses parallèles.</p><div class="bar"><button class="p" data-a="new">Nouvelle collection</button><button data-a="ex">Charger un exemple</button></div></div>`;return}
+const T=TYPES[c.t];
+v.innerHTML=`<div class="vh"><div><h2>${esc(c.name)} — ${esc(c.year)}</h2><div class="mut">${esc(c.brand)} · ${T[0]}</div><div id="stat" class="mut">${entries(c).length} / ${total(c)} cases cochées</div></div><div class="bar"><button data-a="print">Imprimer la checklist</button></div></div>
+<div class="tabs">${[['chk','Checklist'],['add','Ajouter'],['stk','Stock'],['dbl','Doubles']].map(([k,l])=>`<button data-t="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>${tab==='chk'&&c.cards.length?'<p class="mut">Astuce : clique et glisse sur les cases pour cocher ou décocher plusieurs cartes d’un coup.</p>':''}${{chk:vChk,add:vAdd,stk:vStock,dbl:vDbl}[tab](c)}`}
+function vChk(c){return c.subs.map((s,i)=>{const P=pars(c,s),cs=cardsOf(c,s);
+return `<div class="sub"><h3>${esc(s.name)} <small>${cs.length} cartes</small></h3><div class="sc"><table><thead><tr><th>#</th><th>Nom</th>${P.map(p=>`<th class="pc">${esc(p)}</th>`).join('')}</tr></thead><tbody>${cs.map(x=>`<tr><td>${esc(x.n)}</td><td>${esc(x.m)}${x.x?` <small>${esc(x.x)}</small>`:''} <button class="ic" data-a="ecard" data-id="${x.id}" title="Modifier la carte" aria-label="Modifier la carte">✎</button></td>${P.map(p=>{const k=x.id+'|'+p,e=c.own[k];return `<td class="pc"><input type="checkbox" data-k="${k}" ${e?'checked':''} aria-label="${esc(x.m)} ${esc(p)}">${e&&e.q>1?`<sup>×${e.q}</sup>`:''}</td>`}).join('')}</tr>`).join('')}</tbody></table></div></div>`}).join('')||'<p>Aucune carte. Va dans l’onglet Ajouter.</p>'}
+function vAdd(c){const T=TYPES[c.t];return `<div class="sub"><h3>Ajouter des cartes</h3><label class="f" for="sn">Sous-série</label><select id="sn">${c.subs.map(s=>`<option ${s.name===lastSub?'selected':''}>${esc(s.name)}</option>`).join('')}<option value="__new">+ Nouvelle sous-série…</option></select><input id="sn2" style="margin-top:6px;width:100%" placeholder="Nom de la nouvelle sous-série" ${c.subs.length?'hidden':''}>
+<label class="f" for="bt">Une carte par ligne : numéro | ${T[1]} | ${T[2]} (optionnel)</label><textarea id="bt" placeholder="1 | Nom de la carte&#10;2 | Nom de la carte | Note"></textarea><div class="bar"><button class="p" data-a="addc">Ajouter à la checklist</button></div></div>
+<div class="sub"><h3>Sous-séries et parallèles</h3><p class="mut">Chaque sous-série a ses propres parallèles. Renommer un parallèle conserve les cartes cochées ; le supprimer retire aussi les cases cochées. Supprimer une sous-série retire aussi ses cartes.</p>${c.subs.map((s,si)=>`<div class="sp"><div class="pl"><input data-sn="${si}" value="${esc(s.name)}" aria-label="Nom de la sous-série"><button data-a="ds" data-i="${si}">Supprimer la sous-série</button></div>${s.pars.map((p,i)=>`<div class="pl in"><input data-pn="${i}" data-si="${si}" value="${esc(p)}" aria-label="Nom du parallèle"><button class="ic" data-a="mv" data-si="${si}" data-i="${i}" data-d="-1" aria-label="Monter" title="Monter" ${i?'':'disabled'}>↑</button><button class="ic" data-a="mv" data-si="${si}" data-i="${i}" data-d="1" aria-label="Descendre" title="Descendre" ${i<s.pars.length-1?'':'disabled'}>↓</button><button data-a="dp" data-si="${si}" data-i="${i}">Supprimer</button></div>`).join('')}<div class="pl in"><input id="pa-${si}" placeholder="Ajouter des parallèles, séparés par des virgules"><button data-a="ap" data-i="${si}">Ajouter</button>${c.subs.length>1?`<select data-cp="${si}" aria-label="Copier les parallèles"><option value="">Copier de…</option>${c.subs.map((z,zi)=>zi===si?'':`<option value="${zi}">${esc(z.name)}</option>`).join('')}</select>`:''}</div></div>`).join('')||'<p class="mut">Aucune sous-série.</p>'}</div>
+<div class="sub"><h3>Collection</h3><div class="bar"><button data-a="ec">Modifier les informations</button><button data-a="del">Supprimer la collection</button></div></div>`}
+function vStock(c){const E=entries(c);if(!E.length)return '<p>Coche des cartes dans la checklist pour gérer leur stock.</p>';
+return `<p id="tot">${tot(c)}</p><p class="mut">Condition : M mint · NM near mint · EX · VG · G · P</p><div class="sc"><table><thead><tr><th>Carte</th><th>Qté</th><th>Condition</th><th>Prix</th></tr></thead><tbody>${E.map(r=>`<tr><td>${nm(r)}</td><td><input type="number" min="0" class="nm" data-q="${r.k}" value="${r.e.q}"></td><td><select data-cd="${r.k}">${CONDS.map(o=>`<option ${o===r.e.c?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="number" min=".25" step=".01" class="nm" data-pr="${r.k}" value="${r.e.p}"></td></tr>`).join('')}</tbody></table></div>`}
+function vDbl(c){const D=dbl(c);if(!D.length)return '<p>Aucun double pour l’instant. Un double apparaît quand la quantité dépasse 1 dans l’onglet Stock.</p>';
+return `<p>${D.reduce((a,r)=>a+r.e.q-1,0)} doubles · valeur ${money(D.reduce((a,r)=>a+(r.e.q-1)*r.e.p,0))}</p><div class="bar"><button data-a="cpd">Copier la liste</button><button data-a="prd">Imprimer les doubles</button></div><div class="sc"><table><thead><tr><th>Carte</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr></thead><tbody>${D.map(r=>`<tr><td>${nm(r)}</td><td>${r.e.q-1}</td><td>${r.e.c}</td><td>${money(r.e.p)}</td></tr>`).join('')}</tbody></table></div>`}
+function pHTML(c,mode,own){let h=`<h1>${esc(c.name)} — ${esc(c.year)}</h1><div class="sb">${esc(c.brand)} · ${TYPES[c.t][0]}</div>`;
+c.subs.forEach(s=>{const cs=cardsOf(c,s);if(!cs.length)return;const P=pars(c,s),bx=(x,p)=>`<i class="bx">${own&&c.own[x.id+'|'+p]?'✓':''}</i>`;
+h+=`<h2>${esc(s.name)} (${cs.length})</h2>`;
+if(mode==='c')h+=(P.length>1?`<div class="lg">Cases : ${P.map((p,i)=>`${i+1}=${esc(p)}`).join(' · ')}</div>`:'')+`<div class="cp${P.length>2?' c2':''}">${cs.map(x=>`<div>${P.map(p=>bx(x,p)).join('')} <b>${esc(x.n)}</b> ${esc(x.m)}</div>`).join('')}</div>`;
+else h+=`<table class="pt"><tr><th>#</th><th>Nom</th>${P.map(p=>`<th class="v">${esc(p)}</th>`).join('')}</tr>${cs.map(x=>`<tr><td>${esc(x.n)}</td><td>${esc(x.m)}</td>${P.map(p=>`<td class="ctr">${bx(x,p)}</td>`).join('')}</tr>`).join('')}</table>`});return h}
+function dHTML(c){return `<h1>Doubles — ${esc(c.name)} (${esc(c.year)})</h1><table class="pt"><tr><th>Carte</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr>${dbl(c).map(r=>`<tr><td>${nm(r)}</td><td>${r.e.q-1}</td><td>${r.e.c}</td><td>${money(r.e.p)}</td></tr>`).join('')}</table>`}
+const printNow=h=>{$('#pa').innerHTML=h;$('#dlg').close();setTimeout(()=>window.print(),80)};
+function dlg(h){const d=$('#dlg');d.innerHTML=h+'<div class="bar"><button data-a="x">Fermer</button></div>';d.showModal()}
+function showText(t,txt){dlg(`<h3>${t}</h3><textarea id="tx" readonly>${esc(txt)}</textarea>`);const a=$('#tx');a.select();try{navigator.clipboard.writeText(txt).then(()=>toast('Copié'),()=>{})}catch(e){}}
+function addCards(c){let sn=$('#sn').value;if(sn==='__new')sn=$('#sn2').value;sn=sn.trim()||'Base';lastSub=sn;let n=0;
+if(!c.subs.some(s=>s.name===sn))c.subs.push({name:sn,pars:sn==='Base'?[...c.pars]:[]});
+$('#bt').value.split('\n').forEach(l=>{l=l.trim();if(!l)return;let a=l.split(/\s*[|\t]\s*/);if(a.length<2){const m=l.match(/^(\S+)\s+(.+)$/);if(!m)return;a=[m[1],m[2]]}
+if(c.cards.some(x=>x.s===sn&&x.n===a[0]))return;c.cards.push({id:uid(),n:a[0],m:a[1],x:a[2]||'',s:sn});n++});
+save();render();toast(n+' carte(s) ajoutée(s)')}
+function mk(o){const c={id:uid(),name:o.name,year:o.year,brand:o.brand,t:o.t,pars:o.pars,subs:[],cards:[],own:{}};db.cols.push(c);cur=c.id;tab='chk';return c}
+function example(){const c=mk({name:'Collection exemple',year:'2024',brand:'Marque',t:'hockey',pars:['Argent','Or /99']});
+c.subs.push({name:'Base',pars:[...c.pars]},{name:'Insert A',pars:[]});
+for(let i=1;i<=6;i++)c.cards.push({id:uid(),n:String(i),m:'Joueur '+i,x:'Équipe',s:'Base'});
+for(let i=1;i<=3;i++)c.cards.push({id:uid(),n:'A-'+i,m:'Joueur '+i,x:'',s:'Insert A'});
+save();render()}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a],[data-t],[data-c]');if(!t)return;const d=t.dataset,c=col();
+if(d.c){cur=d.c;tab='chk';render();return}if(d.t){tab=d.t;render();return}
+switch(d.a){
+case 'x':$('#dlg').close();break;
+case 'ex':example();break;
+case 'new':dlg(`<h3>Nouvelle collection</h3><label class="f" for="nn">Nom</label><input id="nn"><label class="f" for="ny">Année</label><input id="ny" placeholder="2024-25"><label class="f" for="nb">Éditeur</label><input id="nb"><label class="f" for="nt">Type</label><select id="nt">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select><label class="f" for="np">Parallèles de la sous-série Base (virgules)</label><input id="np" placeholder="Argent, Or /99, Noir /10"><div class="bar"><button class="p" data-a="mk">Créer</button></div>`);break;
+case 'mk':{const n=$('#nn').value.trim();if(!n){toast('Entre un nom');break}mk({name:n,year:$('#ny').value.trim(),brand:$('#nb').value.trim(),t:$('#nt').value,pars:$('#np').value.split(',').map(s=>s.trim()).filter(Boolean)});save();$('#dlg').close();tab='add';render();break}
+case 'addc':addCards(c);break;
+case 'ap':{const S=c.subs[+d.i],L=$('#pa-'+d.i).value.split(',').map(s=>s.trim()).filter((s,i,a)=>s&&s!=='Base'&&!S.pars.includes(s)&&a.indexOf(s)===i);if(!L.length){toast('Rien à ajouter (nom vide ou déjà utilisé)');break}S.pars.push(...L);save();render();toast(L.length+' parallèle(s) ajouté(s)');break}
+case 'mv':{const S=c.subs[+d.si],i=+d.i,j=i+ +d.d;if(j<0||j>=S.pars.length)break;[S.pars[i],S.pars[j]]=[S.pars[j],S.pars[i]];save();render();break}
+case 'dp':{if(!armed(t,'dp'+d.si+'-'+d.i))break;const S=c.subs[+d.si],p=S.pars[+d.i],ids=new Set(c.cards.filter(x=>x.s===S.name).map(x=>x.id));S.pars.splice(+d.i,1);let n=0;Object.keys(c.own).forEach(k=>{const j=k.indexOf('|');if(ids.has(k.slice(0,j))&&k.slice(j+1)===p){delete c.own[k];n++}});save();render();toast(`Parallèle supprimé (${n} case(s) retirée(s))`);break}
+case 'ds':{if(!armed(t,'ds'+d.i))break;const s=c.subs[+d.i],ids=new Set(c.cards.filter(x=>x.s===s.name).map(x=>x.id));c.cards=c.cards.filter(x=>!ids.has(x.id));Object.keys(c.own).forEach(k=>{if(ids.has(k.split('|')[0]))delete c.own[k]});c.subs.splice(+d.i,1);save();render();toast('Sous-série supprimée');break}
+case 'ecard':{const x=c.cards.find(y=>y.id===d.id),T=TYPES[c.t];dlg(`<h3>Modifier la carte</h3><label class="f" for="en">Numéro</label><input id="en" value="${esc(x.n)}"><label class="f" for="em">Nom (${T[1]})</label><input id="em" value="${esc(x.m)}"><label class="f" for="ex">${T[2]}</label><input id="ex" value="${esc(x.x)}"><label class="f" for="es">Sous-série</label><select id="es">${c.subs.map(s=>`<option ${s.name===x.s?'selected':''}>${esc(s.name)}</option>`).join('')}</select><div class="bar"><button class="p" data-a="scard" data-id="${x.id}">Enregistrer</button><button data-a="dcard" data-id="${x.id}">Supprimer la carte</button></div>`);break}
+case 'scard':{const x=c.cards.find(y=>y.id===d.id);x.n=$('#en').value.trim()||x.n;x.m=$('#em').value.trim()||x.m;x.x=$('#ex').value.trim();x.s=$('#es').value;save();$('#dlg').close();render();toast('Carte modifiée');break}
+case 'dcard':{if(!armed(t,'dc'))break;c.cards=c.cards.filter(y=>y.id!==d.id);Object.keys(c.own).forEach(k=>{if(k.split('|')[0]===d.id)delete c.own[k]});save();$('#dlg').close();render();toast('Carte supprimée');break}
+case 'ec':dlg(`<h3>Informations de la collection</h3><label class="f" for="cn">Nom</label><input id="cn" value="${esc(c.name)}"><label class="f" for="cy">Année</label><input id="cy" value="${esc(c.year)}"><label class="f" for="cb">Éditeur</label><input id="cb" value="${esc(c.brand)}"><label class="f" for="ct">Type</label><select id="ct">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}" ${k===c.t?'selected':''}>${v[0]}</option>`).join('')}</select><div class="bar"><button class="p" data-a="sc">Enregistrer</button></div>`);break;
+case 'sc':c.name=$('#cn').value.trim()||c.name;c.year=$('#cy').value.trim();c.brand=$('#cb').value.trim();c.t=$('#ct').value;save();$('#dlg').close();render();break;
+case 'del':if(!delArm){delArm=true;t.textContent='Confirmer la suppression';t.classList.add('p');break}
+db.cols=db.cols.filter(x=>x.id!==c.id);cur=null;delArm=false;save();render();break;
+case 'print':dlg(`<h3>Imprimer la checklist</h3><label class="f"><input type="radio" name="pf" value="c" checked> Compact (colonnes serrées)</label><label class="f"><input type="radio" name="pf" value="f"> Complet (tableau avec cases)</label><label class="f"><input type="checkbox" id="po"> Inclure les cartes déjà cochées</label><div class="bar"><button class="p" data-a="go">Imprimer</button></div><p class="mut">Format lettre 8,5 x 11 po.</p>`);break;
+case 'go':printNow(pHTML(c,document.querySelector('[name=pf]:checked').value,$('#po').checked));break;
+case 'prd':printNow(dHTML(c));break;
+case 'cpd':showText('Liste des doubles',`Doubles — ${c.name} (${c.year})\n`+dbl(c).map(r=>`${r.s.name} #${r.x.n} ${r.x.m}${r.p==='Base'?'':' ['+r.p+']'} ×${r.e.q-1} (${r.e.c}) ${money(r.e.p)}`).join('\n'));break;
+case 'data':dlg(`<h3>Données</h3><p class="mut">Tout est sauvegardé dans ce navigateur. Utilise le bouton « Drive » en haut pour synchroniser avec Google Drive.</p><div class="bar"><button data-a="ej">Exporter en JSON</button><button data-a="et">Inventaire pour Google Sheets</button><button data-a="ij">Importer du JSON</button></div>`);break;
+case 'gd':dlg(`<h3>Google Drive</h3><p class="mut">Tes données sont enregistrées dans le dossier PiCards de ton Drive (fichier picards-data.json). L’app ne voit que les fichiers qu’elle a créés.</p><label class="f" for="cid">Client ID Google</label><input id="cid" value="${esc(ls('picards.cid')||'')}" placeholder="…apps.googleusercontent.com"><div class="bar"><button class="p" data-a="gdc">Connecter / synchroniser</button><button data-a="gdx">Déconnecter</button></div>`);break;
+case 'gdc':{const v=$('#cid').value.trim();if(!v){toast('Entre ton Client ID');break}ls('picards.cid',v);ls('picards.gd','1');$('#dlg').close();gdSync(true);break}
+case 'gdx':if(tok&&window.google&&google.accounts)try{google.accounts.oauth2.revoke(tok)}catch(e){}tok=null;gdFile=null;['picards.gd','picards.gd.file','picards.gd.sync'].forEach(k=>ls(k,null));gdStatus('non connecté');$('#dlg').close();toast('Drive déconnecté');break;
+case 'gdr':gdTake(gdRem);$('#dlg').close();gdStatus('synchronisé ✓');break;
+case 'gdl':ls('picards.gd.sync',String(gdRem.updated||0));$('#dlg').close();gdSync(true);break;
+case 'ej':showText('Sauvegarde JSON',JSON.stringify(db));break;
+case 'et':{const L=[['Collection','Année','Sous-série','#','Nom','Parallèle','Qté','Condition','Prix','Valeur'].join('\t')];db.cols.forEach(c=>entries(c).forEach(r=>L.push([c.name,c.year,r.s.name,r.x.n,r.x.m,r.p,r.e.q,r.e.c,r.e.p,(r.e.q*r.e.p).toFixed(2)].join('\t'))));showText('Colle ceci dans Google Sheets',L.join('\n'));break}
+case 'ij':dlg(`<h3>Importer du JSON</h3><textarea id="ti" placeholder="Colle ici une sauvegarde JSON"></textarea><div class="bar"><button class="p" data-a="ij2">Remplacer mes données</button></div>`);break;
+case 'ij2':try{const o=JSON.parse($('#ti').value);if(!Array.isArray(o.cols))throw 0;db=o;cur=null;db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=MINP))e.p=MINP}));save();$('#dlg').close();render();toast('Données importées')}catch(x){toast('JSON invalide')}break;
+}});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset,c=col();if(!c)return;
+if(d.k){if(t.checked)c.own[d.k]={q:1,c:'NM',p:MINP};else{delete c.own[d.k];const s=t.nextElementSibling;if(s)s.remove()}save();renderList();$('#stat').textContent=`${entries(c).length} / ${total(c)} cases cochées`}
+else if(t.id==='sn'){$('#sn2').hidden=t.value!=='__new'}
+else if(d.cp!==undefined){if(t.value==='')return;const S=c.subs[+d.cp],R=c.subs[+t.value];R.pars.forEach(x=>{if(!S.pars.includes(x))S.pars.push(x)});save();render();toast('Parallèles copiés')}
+else if(d.q){const v=Math.max(0,parseInt(t.value)||0);if(!v){delete c.own[d.q];save();render()}else{c.own[d.q].q=v;save();$('#tot').textContent=tot(c)}}
+else if(d.cd){c.own[d.cd].c=t.value;save()}
+else if(d.pn!==undefined){const S=c.subs[+d.si],i=+d.pn,old=S.pars[i],v=t.value.trim();if(!v||v==='Base'||(v!==old&&S.pars.includes(v))){toast('Nom invalide ou déjà utilisé');render();return}if(v!==old){S.pars[i]=v;const ids=new Set(c.cards.filter(x=>x.s===S.name).map(x=>x.id));Object.keys(c.own).forEach(k=>{const j=k.indexOf('|');if(ids.has(k.slice(0,j))&&k.slice(j+1)===old){c.own[k.slice(0,j+1)+v]=c.own[k];delete c.own[k]}});save();toast('Parallèle renommé')}}
+else if(d.sn!==undefined){const s=c.subs[+d.sn],v=t.value.trim();if(!v||(v!==s.name&&c.subs.some(z=>z.name===v))){toast('Nom invalide ou déjà utilisé');render();return}c.cards.forEach(x=>{if(x.s===s.name)x.s=v});s.name=v;save();render();toast('Sous-série renommée')}
+else if(d.pr){const v=Math.max(MINP,parseFloat(t.value)||MINP);t.value=v;c.own[d.pr].p=v;save();$('#tot').textContent=tot(c)}});
+db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=MINP))e.p=MINP}));persist();
+const SC='https://www.googleapis.com/auth/drive.file',DV='https://www.googleapis.com/drive/v3/files',UP='https://www.googleapis.com/upload/drive/v3/files';
+let tok=null,tokExp=0,gdT=null,gdBusy=false,gdFile=ls('picards.gd.file'),gdRem=null;
+const gdOn=()=>ls('picards.gd')==='1';
+function gdStatus(t){const b=$('#gds');if(b)b.textContent='Drive : '+t}
+function gdSchedule(){if(!gdOn())return;clearTimeout(gdT);gdStatus('modifications en attente…');gdT=setTimeout(()=>gdSync(false),2500)}
+function getToken(){return new Promise((res,rej)=>{
+if(tok&&Date.now()<tokExp-60000)return res(tok);
+const cid=ls('picards.cid');if(!cid)return rej(new Error('Client ID manquant'));
+if(!window.google||!google.accounts)return rej(new Error('Script Google non chargé'));
+google.accounts.oauth2.initTokenClient({client_id:cid,scope:SC,
+callback:r=>{if(r.error)return rej(new Error('auth'));tok=r.access_token;tokExp=Date.now()+r.expires_in*1000;res(tok)},
+error_callback:()=>rej(new Error('auth'))}).requestAccessToken({prompt:''})})}
+async function gd(url,o={}){const t=await getToken(),r=await fetch(url,{...o,headers:{Authorization:'Bearer '+t,...(o.headers||{})}});if(r.status===401){tok=null;throw new Error('auth')}if(!r.ok)throw new Error('Drive '+r.status);return r}
+async function gdLocate(){if(gdFile)return true;
+const j=await(await gd(`${DV}?q=${encodeURIComponent("name='picards-data.json' and trashed=false")}&fields=files(id)&orderBy=modifiedTime%20desc`)).json();
+if(j.files&&j.files.length){gdFile=j.files[0].id;ls('picards.gd.file',gdFile);return true}return false}
+async function gdCreate(){
+const j=await(await gd(`${DV}?q=${encodeURIComponent("name='PiCards' and mimeType='application/vnd.google-apps.folder' and trashed=false")}&fields=files(id)`)).json();let f=j.files&&j.files[0]&&j.files[0].id;
+if(!f)f=(await(await gd(DV,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'PiCards',mimeType:'application/vnd.google-apps.folder'})})).json()).id;
+const b='picardsbnd',u=db.updated||0,body=`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({name:'picards-data.json',parents:[f],mimeType:'application/json'})}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(db)}\r\n--${b}--`;
+gdFile=(await(await gd(`${UP}?uploadType=multipart&fields=id`,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body})).json()).id;ls('picards.gd.file',gdFile);ls('picards.gd.sync',String(u))}
+async function gdPush(){const u=db.updated||0;await gd(`${UP}/${gdFile}?uploadType=media`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(db)});ls('picards.gd.sync',String(u))}
+function gdTake(r){if(!r||!Array.isArray(r.cols))throw new Error('Fichier Drive invalide');db=r;db.cols.forEach(mig);cur=null;persist();ls('picards.gd.sync',String(r.updated||0));render()}
+async function gdSync(manual,retry){if(gdBusy)return;gdBusy=true;gdStatus('synchronisation…');
+try{
+if(!await gdLocate())await gdCreate();
+else{const rem=await(await gd(`${DV}/${gdFile}?alt=media`)).json(),sy=ls('picards.gd.sync'),lu=String(db.updated||0),ru=String(rem.updated||0);
+if(ru===lu)ls('picards.gd.sync',ru);
+else if(!db.cols.length||(sy&&lu===sy))gdTake(rem);
+else if(sy&&ru===sy)await gdPush();
+else{gdRem=rem;gdBusy=false;gdStatus('conflit à résoudre');dlg(`<h3>Conflit de synchronisation</h3><p>Ton Drive et cet appareil ont chacun des changements. Quelle version garder ? Drive conserve l’historique des versions du fichier.</p><div class="bar"><button class="p" data-a="gdr">Garder la version Drive</button><button data-a="gdl">Garder cet appareil (remplace Drive)</button></div>`);return}}
+gdStatus('synchronisé ✓');ls('picards.gd','1');
+if(String(db.updated||0)!==ls('picards.gd.sync'))gdSchedule();
+}catch(e){
+if(e.message==='Drive 404'&&!retry){gdFile=null;ls('picards.gd.file',null);gdBusy=false;return gdSync(manual,true)}
+gdStatus(e.message==='auth'?'cliquer pour reconnecter':'erreur');if(manual)toast(e.message==='auth'?'Connexion Google annulée ou expirée':e.message)}
+gdBusy=false}
+let paint=null,pdirty=false,skipClick=false;
+const cellIn=(x,y)=>{const el=document.elementFromPoint(x,y),td=el&&el.closest('td.pc');return td&&td.querySelector('input[data-k]')};
+function paintBox(i,on,first){const c=col(),k=i.dataset.k,e=c.own[k];
+if(on){if(e)return;c.own[k]={q:1,c:'NM',p:MINP};i.checked=true}
+else{if(!e||(!first&&e.q>1))return;delete c.own[k];i.checked=false;const s=i.nextElementSibling;if(s)s.remove()}
+pdirty=true}
+function endPaint(){if(!paint)return;paint=null;setTimeout(()=>skipClick=false,50);if(pdirty){pdirty=false;const c=col();save();renderList();$('#stat').textContent=`${entries(c).length} / ${total(c)} cases cochées`}}
+document.addEventListener('pointerdown',e=>{if(e.button!==0||e.pointerType==='touch'||!col())return;const i=cellIn(e.clientX,e.clientY);if(!i)return;paint={on:!i.checked};skipClick=true;paintBox(i,paint.on,true)});
+document.addEventListener('pointermove',e=>{if(!paint)return;const i=cellIn(e.clientX,e.clientY);if(i)paintBox(i,paint.on,false)});
+document.addEventListener('pointerup',endPaint);document.addEventListener('pointercancel',endPaint);window.addEventListener('blur',endPaint);
+document.addEventListener('mousedown',e=>{const td=e.target.closest('td.pc');if(td&&td.querySelector('input[data-k]'))e.preventDefault()});
+document.addEventListener('click',e=>{if(skipClick&&e.target.closest('td.pc')){e.preventDefault();e.stopPropagation()}skipClick=false},true);
+if(db.cols.length)cur=db.cols[0].id;render();gdStatus(gdOn()?'cliquer pour reconnecter':'non connecté');
+</script></body></html>
