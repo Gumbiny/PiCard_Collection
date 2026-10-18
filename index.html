@@ -157,8 +157,16 @@ if(d.c){cur=d.c;tab='chk';render();return}if(d.t){tab=d.t;render();return}
 switch(d.a){
 case 'x':$('#dlg').close();break;
 case 'ex':example();break;
-case 'new':dlg(`<h3>Nouvelle collection</h3><label class="f" for="nn">Nom</label><input id="nn"><label class="f" for="ny">Année</label><input id="ny" placeholder="2024-25"><label class="f" for="nb">Éditeur</label><input id="nb"><label class="f" for="nt">Type</label><select id="nt">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select><label class="f" for="np">Parallèles de la sous-série Base (virgules)</label><input id="np" placeholder="Argent, Or /99, Noir /10"><div class="bar"><button class="p" data-a="mk">Créer</button></div>`);break;
-case 'mk':{const n=$('#nn').value.trim();if(!n){toast('Entre un nom');break}mk({name:n,year:$('#ny').value.trim(),brand:$('#nb').value.trim(),t:$('#nt').value,pars:$('#np').value.split(',').map(s=>s.trim()).filter(Boolean)});save();$('#dlg').close();tab='add';render();break}
+case 'new':dlg(`<h3>Nouvelle collection</h3>${db.cols.length?`<label class="f" for="nf">Partir de</label><select id="nf"><option value="">Rien (collection vide)</option>${db.cols.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.year)}</option>`).join('')}</select>`:''}<label class="f" for="nn">Nom</label><input id="nn"><label class="f" for="ny">Année</label><input id="ny" placeholder="2024-25"><label class="f" for="nb">Éditeur</label><input id="nb"><label class="f" for="nt">Type</label><select id="nt">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select><label class="f" for="np">Parallèles de la sous-série Base (virgules)</label><input id="np" placeholder="Argent, Or /99, Noir /10"><div id="ns"></div><div class="bar"><button class="p" data-a="mk">Créer</button></div>`);break;
+case 'mk':{const n=$('#nn').value.trim();if(!n){toast('Entre un nom');break}
+const src=db.cols.find(x=>x.id===($('#nf')||{}).value),base={name:n,year:$('#ny').value.trim(),brand:$('#nb').value.trim(),t:$('#nt').value};
+if(!src)mk({...base,pars:$('#np').value.split(',').map(s=>s.trim()).filter(Boolean)});
+else{const c2=mk({...base,pars:[]}),rows=[];
+document.querySelectorAll('#ns .nr').forEach(r=>{if(!r.querySelector('.nk').checked)return;const nm=r.querySelector('.nn2').value.trim();if(!nm||rows.some(x=>x.name===nm))return;rows.push({name:nm,o:+r.dataset.o,pars:[...new Set(r.querySelector('.np2').value.split(',').map(z=>z.trim()).filter(z=>z&&z!=='Base'))]})});
+rows.forEach(r=>c2.subs.push({name:r.name,pars:r.pars}));
+if(src.goal){c2.goal={};rows.forEach(r=>{const os=src.subs[r.o];if(!os)return;const g=k=>src.goal[os.name+'|'+k];if(g('Base'))c2.goal[r.name+'|Base']=1;r.pars.forEach(q=>{if(g(q))c2.goal[r.name+'|'+q]=1})})}}
+save();$('#dlg').close();tab='add';render();break}
+case 'nrow':{const b=document.querySelector('#ns .bar');b.insertAdjacentHTML('beforebegin',nrow('','',-1));const r=b.previousElementSibling;r.querySelector('.nn2').focus();break}
 case 'addc':addCards(c);break;
 case 'ap':{const S=c.subs[+d.i],L=$('#pa-'+d.i).value.split(',').map(s=>s.trim()).filter((s,i,a)=>s&&s!=='Base'&&!S.pars.includes(s)&&a.indexOf(s)===i);if(!L.length){toast('Rien à ajouter (nom vide ou déjà utilisé)');break}S.pars.push(...L);save();render();toast(L.length+' parallèle(s) ajouté(s)');break}
 case 'mv':{const S=c.subs[+d.si],i=+d.i,j=i+ +d.d;if(j<0||j>=S.pars.length)break;[S.pars[i],S.pars[j]]=[S.pars[j],S.pars[i]];save();render();break}
@@ -307,6 +315,14 @@ document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.clo
 document.addEventListener('dragover',e=>{const r=e.target.closest&&e.target.closest('.sp[data-si]');if(dragS===null||!r)return;e.preventDefault();document.querySelectorAll('.sp.over').forEach(z=>z.classList.remove('over'));if(+r.dataset.si!==dragS)r.classList.add('over')});
 document.addEventListener('drop',e=>{const r=e.target.closest&&e.target.closest('.sp[data-si]');if(dragS===null||!r)return;e.preventDefault();const f=dragS;dragS=null;moveSub(col(),f,+r.dataset.si)});
 document.addEventListener('dragend',()=>{dragS=null;document.querySelectorAll('.sp.over').forEach(z=>z.classList.remove('over'))});
+const nrow=(n,p,o)=>`<div class="sp nr" data-o="${o}"><div class="pl"><input type="checkbox" class="nk" style="flex:none" checked aria-label="Inclure"><input class="nn2" value="${esc(n)}" placeholder="Nom de la sous-série" aria-label="Nom de la sous-série"></div><div class="pl in"><input class="np2" value="${esc(p)}" placeholder="Parallèles, séparés par des virgules" aria-label="Parallèles"></div></div>`;
+const nextYear=y=>String(y).replace(/\d{4}/g,m=>+m+1).replace(/-(\d{2})$/,(m,a)=>'-'+String((+a+1)%100).padStart(2,'0'));
+function fillNew(id){const src=db.cols.find(x=>x.id===id),ns=$('#ns'),np=$('#np'),lb=document.querySelector('[for=np]');
+np.style.display=lb.style.display=src?'none':'';
+if(!src){ns.innerHTML='';return}
+$('#nn').value=src.name;$('#ny').value=nextYear(src.year);$('#nb').value=src.brand;$('#nt').value=src.t;
+ns.innerHTML='<p class="mut" style="margin:8px 0 2px">Sous-séries à créer : modifie les noms et les parallèles, décoche pour retirer une sous-série.</p>'+src.subs.map((z,i)=>nrow(z.name,z.pars.join(', '),i)).join('')+'<div class="bar"><button data-a="nrow">+ Sous-série</button></div>'}
+document.addEventListener('change',e=>{if(e.target.id==='nf')fillNew(e.target.value)});
 function fitCl(){const el=document.getElementById('cl');if(!el)return;const top=el.getBoundingClientRect().top+window.scrollY;el.style.maxHeight=Math.max(300,window.innerHeight-top-14)+'px'}
 window.addEventListener('resize',fitCl);
 let hlT=null,hlI=-1;
