@@ -22,7 +22,12 @@ button.p{background:var(--red);border-color:var(--red);color:#fff;font-weight:60
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 .ic{padding:0 6px;border:0;background:none;color:var(--mut)}.pl{display:flex;gap:6px;margin:4px 0}.pl input{flex:1}.sp{border-top:1px solid var(--line);padding:8px 0}.in{margin-left:18px}.pl select{max-width:150px}.pb{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:2px 0}.pb i{display:block;height:100%;background:var(--red)}.gr{margin:6px 0}.ci[draggable]{cursor:grab}.ci.over{outline:2px dashed var(--red)}
-#cl{overflow:auto;position:relative;max-height:70vh}
+#cl{overflow:auto;position:relative;max-height:70vh;--ttl:#475f7f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #cl{--ttl:#587aa6}}
+:root[data-theme="dark"] #cl{--ttl:#587aa6}
+#cl .sub>h3{background:var(--ttl);color:#fff;border-radius:6px;padding:3px 10px}
+#cl .sub>h3 small{color:rgba(255,255,255,.82)}
+.ck thead th.s1,.ck thead th.s2{background:var(--ttl);color:#fff}
 .ck{--hl:color-mix(in srgb,var(--ice) 60%,var(--paper));width:auto;border-collapse:separate;border-spacing:0}
 .ck th,.ck td{padding:4px 6px;background:var(--paper);border-bottom:1px solid var(--line)}
 .ck thead th{position:sticky;top:0;z-index:3;border-bottom:2px solid var(--line);vertical-align:bottom;color:var(--ink)}
@@ -70,7 +75,7 @@ body{background:#fff}body>*:not(#pa){display:none!important}
 #pa{display:block;color:#000;background:#fff;font-family:Arial,sans-serif}
 #pa h1{font-size:16pt}#pa .sb{font-size:9pt;margin-bottom:6px}
 #pa h2{font-size:11pt;border-bottom:1px solid #000;margin:10px 0 4px;break-after:avoid}
-.lg{font-size:7.5pt;margin-bottom:3px}.np{break-before:page}.wl{font-size:10pt;margin:5px 0;line-height:1.5}.cp.c1{column-count:1}.bx.on{background:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}th.n{font-size:6pt;font-weight:400;text-align:center;padding:0 1px}
+.lg{font-size:7.5pt;margin-bottom:3px}.ph{display:flex;gap:12px;align-items:center;margin-bottom:6px}.ph img{width:.85in;height:.85in;object-fit:cover;border-radius:6px;flex:none}.np{break-before:page}.wl{font-size:10pt;margin:5px 0;line-height:1.5}.cp.c1{column-count:1}.bx.on{background:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}th.n{font-size:6pt;font-weight:400;text-align:center;padding:0 1px}
 .cp{column-count:3;column-gap:14px;font-size:7.5pt}.cp.c2{column-count:2}
 .cp div{break-inside:avoid;white-space:nowrap;overflow:hidden;line-height:1.55}
 .bx{display:inline-block;width:7px;height:7px;border:1px solid #000;margin-right:2px;vertical-align:middle;font:7px/7px Arial;text-align:center;font-style:normal}
@@ -116,9 +121,17 @@ function vAdd(c){if(dsel.cid!==c.id)Object.assign(dsel,{cid:c.id,sel:new Set(),q
 <div class="sub"><h3>Retirer des cartes</h3><p class="mut">Coche les cartes à supprimer (Maj + clic pour une plage), puis supprime-les d’un coup. Les cases cochées de ces cartes sont retirées aussi.</p><div class="bar"><select id="ds-s" aria-label="Sous-série">${c.subs.map(z=>`<option ${z.name===dsel.sub?'selected':''}>${esc(z.name)}</option>`).join('')}</select><input id="ds-q" type="search" placeholder="Filtrer (numéro, nom…)" value="${esc(dsel.q)}" aria-label="Filtrer"></div><div class="bar"><button data-a="dsa">Tout sélectionner (affichées)</button><button data-a="dsn">Aucune</button><button class="p" id="dsx" data-a="dsx">Supprimer la sélection (${dsel.sel.size})</button></div><div id="dl" class="dl">${delList(c)}</div></div>
 <div class="sub"><h3>Sous-séries et parallèles</h3><p class="mut">Chaque sous-série a ses propres parallèles. Renommer un parallèle conserve les cartes cochées ; le supprimer retire aussi les cases cochées. Supprimer une sous-série retire aussi ses cartes.</p><div class="bar"><button class="p" data-a="apall">Ajouter tous les parallèles saisis</button></div>${c.subs.map((s,si)=>`<div class="sp" data-si="${si}"><div class="pl"><span class="gh" draggable="true" title="Glisser pour réorganiser">⠿</span><input data-sn="${si}" value="${esc(s.name)}" aria-label="Nom de la sous-série"><button class="ic" data-a="sm" data-i="${si}" data-d="-1" aria-label="Monter" title="Monter" ${si?'':'disabled'}>↑</button><button class="ic" data-a="sm" data-i="${si}" data-d="1" aria-label="Descendre" title="Descendre" ${si<c.subs.length-1?'':'disabled'}>↓</button><button data-a="ds" data-i="${si}">Supprimer la sous-série</button></div>${s.pars.map((p,i)=>`<div class="pl in"><input type="color" data-pcl="${esc(p)}" value="${hexOf(pcolor(c,p))}" title="Couleur du parallèle" aria-label="Couleur" style="flex:none;width:34px;height:28px;padding:0;border:0;background:none"><input data-pn="${i}" data-si="${si}" value="${esc(p)}" aria-label="Nom du parallèle"><button class="ic" data-a="mv" data-si="${si}" data-i="${i}" data-d="-1" aria-label="Monter" title="Monter" ${i?'':'disabled'}>↑</button><button class="ic" data-a="mv" data-si="${si}" data-i="${i}" data-d="1" aria-label="Descendre" title="Descendre" ${i<s.pars.length-1?'':'disabled'}>↓</button><button data-a="dp" data-si="${si}" data-i="${i}">Supprimer</button></div>`).join('')}<div class="pl in"><input id="pa-${si}" data-pd="${esc(s.name)}" value="${esc(pdraft[s.name]||'')}" placeholder="Ajouter des parallèles, séparés par des virgules"><button data-a="ap" data-i="${si}">Ajouter</button>${c.subs.length>1?`<select data-cp="${si}" aria-label="Copier les parallèles"><option value="">Copier de…</option>${c.subs.map((z,zi)=>zi===si?'':`<option value="${zi}">${esc(z.name)}</option>`).join('')}</select>`:''}</div></div>`).join('')||'<p class="mut">Aucune sous-série.</p>'}</div>
 <div class="sub"><h3>Collection</h3><p class="mut">Sets (3 maximum) : chaque set a ses propres cases cochées, quantités et prix.</p>${c.sets.map((z,i)=>`<div class="pl"><input data-nm="${i}" value="${esc(z.name)}" aria-label="Nom du set"><button data-a="dset" data-i="${i}" ${c.sets.length<2?'disabled':''}>Supprimer</button></div>`).join('')}<div class="bar"><button data-a="ec">Modifier les informations</button><button data-a="del">Supprimer la collection</button></div></div>`}
+function dblTable(c){const D=dbl(c),par=sf.g==='p',M=new Map();
+D.forEach(r=>{const k=par?r.p:r.s.name;if(!M.has(k))M.set(k,{key:k,rows:[],n:0,v:0});const g=M.get(k);g.rows.push(r);g.n+=r.e.q-1;g.v+=(r.e.q-1)*r.e.p});
+const G=[...M.values()],cs=par?7:6,vals=r=>`<td>${r.e.q-1}</td><td>${esc(r.e.c)}</td><td>${money(r.e.p)}</td>`;
+const flat=r=>`<tr><td><span class="bt" style="background:${bcol(r.s.name)}">${esc(r.s.name)}</span></td><td>${esc(r.x.n)}</td><td>${esc(r.x.m)}${r.x.x?` <small>${esc(r.x.x)}</small>`:''}</td><td>${pill(c,r.p)}</td>${vals(r)}</tr>`;
+const nested=rows=>{const out=[];let i=0;while(i<rows.length){const x=rows[i].x,gr=[];while(i<rows.length&&rows[i].x.id===x.id)gr.push(rows[i++]);const b=gr.find(r=>r.p==='Base');
+out.push(`<tr class="cr"><td>${esc(x.n)}</td><td>${esc(x.m)}${x.x?` <small>${esc(x.x)}</small>`:''}</td><td>${b?'<span class="tg0">Base</span>':''}</td>${b?vals(b):'<td></td><td></td><td></td>'}</tr>`);
+gr.filter(r=>r.p!=='Base').forEach(r=>out.push(`<tr class="sr"><td></td><td class="sb"><span class="tr">╰</span> ${pill(c,r.p)}</td><td></td>${vals(r)}</tr>`))}return out.join('')};
+return`<table class="sk"><thead><tr>${par?'<th>Bloc</th>':''}<th>#</th><th>Joueur</th><th>Version</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr></thead><tbody>${G.map(g=>{const col=par?pcolor(c,g.key):bcol(g.key),off=sf.col['d|'+g.key];return`<tr class="gh" data-a="gt" data-gk="d|${esc(g.key)}" style="--gc:${col};--gt:${ink(hexOf(col))}"><td colspan="${cs}"><span class="cv">${off?'▸':'▾'}</span><span>${esc(g.key)}</span> <small class="gs">· ${g.n} double(s) · ${money(g.v)}</small></td></tr>`+(off?'':par?g.rows.map(flat).join(''):nested(g.rows))}).join('')}</tbody></table>`}
 function vDbl(c){const D=dbl(c);if(!D.length)return '<p>Aucun double pour l’instant. Un double apparaît quand la quantité dépasse 1 dans l’onglet Stock.</p>';
-return `<p>${D.reduce((a,r)=>a+r.e.q-1,0)} doubles · valeur ${money(D.reduce((a,r)=>a+(r.e.q-1)*r.e.p,0))}</p><div class="bar"><button data-a="cpd">Copier la liste</button><button data-a="prd">Imprimer les doubles</button></div><div class="sc"><table><thead><tr><th>Carte</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr></thead><tbody>${D.map(r=>`<tr><td>${nm(r)}</td><td>${r.e.q-1}</td><td>${r.e.c}</td><td>${money(r.e.p)}</td></tr>`).join('')}</tbody></table></div>`}
-function pHTML(c,o){let h=`<h1>${esc(c.name)} — ${esc(c.year)}${c.sets.length>1?' · '+esc(c.sets[c.si].name):''}</h1><div class="sb">${esc(c.brand)} · ${TYPES[c.t][0]}${o.m==='w'?' · Liste des manquantes':''}</div>`,first=true;
+return`<p>${D.reduce((a,r)=>a+r.e.q-1,0)} doubles · valeur ${money(D.reduce((a,r)=>a+(r.e.q-1)*r.e.p,0))}</p><div class="bar"><span class="sets" role="group" aria-label="Regroupement"><button data-a="sg" data-gm="b" class="${sf.g==='b'?'on':''}">Par bloc</button><button data-a="sg" data-gm="p" class="${sf.g==='p'?'on':''}">Par parallèle</button></span><button data-a="cpd">Copier la liste</button><button data-a="prd">Imprimer les doubles</button></div><div class="sc" id="dk">${dblTable(c)}</div>`}
+function pHTML(c,o){let h=hdr(c,`<h1>${esc(c.name)} — ${esc(c.year)}${c.sets.length>1?' · '+esc(c.sets[c.si].name):''}</h1><div class="sb">${esc(c.brand)} · ${TYPES[c.t][0]}${o.m==='w'?' · Liste des manquantes':''}</div>`,o.img),first=true;
 c.subs.forEach((s,si)=>{if(!o.b.includes(si))return;const cs=cardsOf(c,s),P=(o.c[si]||[]).filter(p=>pars(c,s).includes(p));if(!cs.length||!P.length)return;
 const bx=(x,p)=>`<i class="bx${o.own&&c.own[x.id+'|'+p]?' on':''}"></i>`;
 h+=`<section class="${o.np&&!first?'np':''}"><h2>${esc(s.name)} (${cs.length})</h2>`;first=false;
@@ -129,13 +142,14 @@ h+='</section>'});return h}
 function printDlg(c){dlg(`<h3>Imprimer</h3><label class="f" for="pm">Type</label><select id="pm"><option value="b">Feuille vierge à remplir à la main</option><option value="o">Ma collection (cases cochées)</option><option value="w">Liste des manquantes</option></select>
 <label class="f" for="pf">Format (sauf liste des manquantes)</label><select id="pf"><option value="c">Compact</option><option value="f">Complet (tableau)</option></select>
 <label class="f" for="pr">Orientation</label><select id="pr"><option value="a">Automatique</option><option value="p">Portrait</option><option value="l">Paysage</option></select>
-${c.sets.some(z=>z.src!=null)?'<label class="f"><input type="checkbox" id="px"> Liste des manquantes : ajouter les cartes dont je n’ai qu’un exemplaire (nouvelles pour le set des doubles)</label>':''}<label class="f"><input type="checkbox" id="pn"> Chaque bloc sur une nouvelle page</label>
+${c.sets.some(z=>z.src!=null)?'<label class="f"><input type="checkbox" id="px"> Liste des manquantes : ajouter les cartes dont je n’ai qu’un exemplaire (nouvelles pour le set des doubles)</label>':''}${c.img?'<label class="f"><input type="checkbox" id="pi" checked> Inclure l’image de la collection</label>':''}<label class="f"><input type="checkbox" id="pn"> Chaque bloc sur une nouvelle page</label>
 <h3 style="margin-top:12px">Blocs et colonnes</h3><p class="mut">Par défaut, seule la colonne Base (la carte sans parallèle) de chaque bloc est imprimée. Coche les parallèles à ajouter.</p>
 <p class="mut" style="margin:6px 0 0">Blocs :</p><div class="bar" style="margin:2px 0"><button data-a="pbk" data-m="a">Tous les blocs</button><button data-a="pbk" data-m="b">Base seulement</button><button data-a="pbk" data-m="i">Inserts seulement</button></div><p class="mut" style="margin:6px 0 0">Parallèles à imprimer dans chaque bloc :</p><div class="bar" style="margin:2px 0"><button data-a="pg" data-m="b">Aucun parallèle</button><button data-a="pg" data-m="g">Mon objectif</button><button data-a="pg" data-m="a">Tous les parallèles</button></div>
 ${c.subs.map((s,si)=>`<div class="gr"><label><input type="checkbox" data-pb="${si}" checked> <b>${esc(s.name)}</b> <small>${cardsOf(c,s).length} cartes</small></label><br>${pars(c,s).map(p=>`<label><input type="checkbox" data-pc="${si}" value="${esc(p)}" ${p==='Base'?'checked':''}> ${esc(dn(p))}</label>`).join('')}</div>`).join('')}
 <div class="bar"><button class="p" data-a="go">Imprimer</button></div>`)}
-function dHTML(c){return `<h1>Doubles — ${esc(c.name)} (${esc(c.year)})</h1><table class="pt"><tr><th>Carte</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr>${dbl(c).map(r=>`<tr><td>${nm(r)}</td><td>${r.e.q-1}</td><td>${r.e.c}</td><td>${money(r.e.p)}</td></tr>`).join('')}</table>`}
-const printNow=(h,ori)=>{$('#pa').innerHTML=h;$('#dlg').close();let st=$('#pgs');if(!st){st=document.createElement('style');st.id='pgs';document.head.appendChild(st)}st.textContent=`@page{size:letter ${ori||'portrait'};margin:.5in}`;setTimeout(()=>window.print(),80)};
+function dHTML(c){return hdr(c,`<h1>Doubles — ${esc(c.name)} (${esc(c.year)})${c.sets.length>1?' · '+esc(c.sets[c.si].name):''}</h1>`,true)+`<table class="pt"><tr><th>Bloc</th><th>#</th><th>Joueur</th><th>Version</th><th>Doubles</th><th>Cond.</th><th>Prix</th></tr>${dbl(c).map(r=>`<tr><td>${esc(r.s.name)}</td><td>${esc(r.x.n)}</td><td>${esc(r.x.m)}${r.x.x?' ('+esc(r.x.x)+')':''}</td><td>${esc(r.p)}</td><td>${r.e.q-1}</td><td>${esc(r.e.c)}</td><td>${money(r.e.p)}</td></tr>`).join('')}</table>`}
+const hdr=(c,inner,on)=>{const u=on&&c.img&&imgURL[c.img];return u?`<div class="ph"><img src="${u}" alt=""><div>${inner}</div></div>`:inner};
+const printNow=(h,ori)=>{$('#pa').innerHTML=h;$('#dlg').close();let st=$('#pgs');if(!st){st=document.createElement('style');st.id='pgs';document.head.appendChild(st)}st.textContent=`@page{size:letter ${ori||'portrait'};margin:.5in}`;const im=[...$('#pa').querySelectorAll('img')].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r}));Promise.race([Promise.all(im),new Promise(r=>setTimeout(r,2000))]).then(()=>setTimeout(()=>window.print(),80))};
 function dlg(h){const d=$('#dlg');d.innerHTML=h+'<div class="bar"><button data-a="x">Fermer</button></div>';d.showModal()}
 function showText(t,txt){dlg(`<h3>${t}</h3><textarea id="tx" readonly>${esc(txt)}</textarea>`);const a=$('#tx');a.select();try{navigator.clipboard.writeText(txt).then(()=>toast('Copié'),()=>{})}catch(e){}}
 let pend=null;
@@ -161,15 +175,15 @@ if(d.c){cur=d.c;tab='chk';render();return}if(d.t){tab=d.t;render();return}
 switch(d.a){
 case 'x':$('#dlg').close();break;
 case 'ex':example();break;
-case 'new':dlg(`<h3>Nouvelle collection</h3>${db.cols.length?`<label class="f" for="nf">Partir de</label><select id="nf"><option value="">Rien (collection vide)</option>${db.cols.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.year)}</option>`).join('')}</select>`:''}<label class="f" for="nn">Nom</label><input id="nn"><label class="f" for="ny">Année</label><input id="ny" placeholder="2024-25"><label class="f" for="nb">Éditeur</label><input id="nb"><label class="f" for="nt">Type</label><select id="nt">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select><label class="f" for="np">Parallèles de la sous-série Base (virgules)</label><input id="np" placeholder="Argent, Or /99, Noir /10"><div id="ns"></div><div class="bar"><button class="p" data-a="mk">Créer</button></div>`);break;
+case 'new':dlg(`<h3>Nouvelle collection</h3><div id="nck"></div>${db.cols.length?`<label class="f" for="nf">Partir de</label><select id="nf"><option value="">Rien (collection vide)</option>${db.cols.map(x=>`<option value="${x.id}">${esc(x.name)} — ${esc(x.year)}</option>`).join('')}</select>`:''}<label class="f" for="nn">Nom</label><input id="nn"><label class="f" for="ny">Année</label><input id="ny" placeholder="2024-25"><label class="f" for="nb">Éditeur</label><input id="nb"><label class="f" for="nt">Type</label><select id="nt">${Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select><label class="f" for="np">Parallèles de la sous-série Base (virgules)</label><input id="np" placeholder="Argent, Or /99, Noir /10"><div id="ns"></div><div class="bar"><button class="p" data-a="mk">Créer</button></div>`);loadCkIndex();break;
 case 'mk':{const n=$('#nn').value.trim();if(!n){toast('Entre un nom');break}
 const src=db.cols.find(x=>x.id===($('#nf')||{}).value),base={name:n,year:$('#ny').value.trim(),brand:$('#nb').value.trim(),t:$('#nt').value};
-if(!src)mk({...base,pars:$('#np').value.split(',').map(s=>s.trim()).filter(Boolean)});
+if(CKON())importCk(base);else if(!src)mk({...base,pars:$('#np').value.split(',').map(s=>s.trim()).filter(Boolean)});
 else{const c2=mk({...base,pars:[]}),rows=[];
 document.querySelectorAll('#ns .nr').forEach(r=>{if(!r.querySelector('.nk').checked)return;const nm=r.querySelector('.nn2').value.trim();if(!nm||rows.some(x=>x.name===nm))return;rows.push({name:nm,o:+r.dataset.o,pars:[...new Set(r.querySelector('.np2').value.split(',').map(z=>z.trim()).filter(z=>z&&z!=='Base'))]})});
 rows.forEach(r=>c2.subs.push({name:r.name,pars:r.pars}));if(src.pcol)c2.pcol={...src.pcol};
 if(src.goal){c2.goal={};rows.forEach(r=>{const os=src.subs[r.o];if(!os)return;const g=k=>src.goal[os.name+'|'+k];if(g('Base'))c2.goal[r.name+'|Base']=1;r.pars.forEach(q=>{if(g(q))c2.goal[r.name+'|'+q]=1})})}}
-save();$('#dlg').close();tab='add';render();break}
+save();$('#dlg').close();tab=importCk.done?'chk':'add';importCk.done=false;render();break}
 case 'nrow':{const b=document.querySelector('#ns .bar');b.insertAdjacentHTML('beforebegin',nrow('','',-1));const r=b.previousElementSibling;r.querySelector('.nn2').focus();break}
 case 'addc':addCards(c);break;
 case 'ap':{const S=c.subs[+d.i],L=$('#pa-'+d.i).value.split(',').map(s=>s.trim()).filter((s,i,a)=>s&&s!=='Base'&&!S.pars.includes(s)&&a.indexOf(s)===i);if(!L.length){toast('Rien à ajouter (nom vide ou déjà utilisé)');break}S.pars.push(...L);delete pdraft[S.name];save();render();toast(L.length+' parallèle(s) ajouté(s)');break}
@@ -195,17 +209,17 @@ case 'avs':avSave(c);break;
 case 'avr':if(c.img){avDel(c.img);c.img=''}save();$('#dlg').close();render();break;
 case 'sm':moveSub(c,+d.i,+d.i+ +d.d);break;
 case 'sg':sf.g=d.gm;render();break;
-case 'gt':sf.col[d.gk]=!sf.col[d.gk];$('#sk').innerHTML=stockTable(c);break;
+case 'gt':sf.col[d.gk]=!sf.col[d.gk];if(tab==='dbl')$('#dk').innerHTML=dblTable(c);else $('#sk').innerHTML=stockTable(c);break;
 case 'prw':printDlg(c);$('#pm').value='w';break;
 case 'cpw':showText('Liste des manquantes',`${c.name} (${c.year})\n`+missData(c).map(b=>b.s.name+'\n'+b.rows.map(r=>`  ${r.p} (${r.m.length}) : ${r.m.length?r.m.map(x=>mf.names?x.n+' '+x.m:x.n).join(mf.names?' | ':', '):'complète'}`).join('\n')).join('\n'));break;
 case 'pbk':{const B=i=>/^base/i.test(c.subs[i].name),hb=c.subs.some((z,i)=>B(i));document.querySelectorAll('[data-pb]').forEach(i=>{const si=+i.dataset.pb,m=d.m;i.checked=m==='a'||(m==='b'?(hb?B(si):si===0):(hb?!B(si):si>0))});break}
 case 'pg':document.querySelectorAll('[data-pc]').forEach(i=>{const m=d.m;i.checked=m==='a'||(m==='b'?i.value==='Base':inGoal(c,c.subs[+i.dataset.pc],i.value))});break;
 case 'go':{const q=z=>[...document.querySelectorAll(z)],o={m:$('#pm').value,f:$('#pf').value,np:$('#pn').checked,b:q('[data-pb]:checked').map(i=>+i.dataset.pb),c:{}};
 q('[data-pc]:checked').forEach(i=>(o.c[i.dataset.pc]=o.c[i.dataset.pc]||[]).push(i.value));
-o.own=o.m==='o';{const L=c.sets.findIndex(z=>z.src!=null),x=$('#px');if(o.m==='w'&&x&&x.checked&&L>=0){o.x=1;o.l=L;o.a=c.sets[L].src}}const mx=Math.max(0,...o.b.map(si=>(o.c[si]||[]).length)),r=$('#pr').value;
+o.own=o.m==='o';{const L=c.sets.findIndex(z=>z.src!=null),x=$('#px');if(o.m==='w'&&x&&x.checked&&L>=0){o.x=1;o.l=L;o.a=c.sets[L].src}}o.img=!!($('#pi')&&$('#pi').checked);const mx=Math.max(0,...o.b.map(si=>(o.c[si]||[]).length)),r=$('#pr').value;
 if(!mx){toast('Choisis au moins une colonne');break}
-printNow(pHTML(c,o),r==='l'||(r==='a'&&o.m!=='w'&&mx>(o.f==='f'?16:10))?'landscape':'portrait');break}
-case 'prd':printNow(dHTML(c));break;
+const ori=r==='l'||(r==='a'&&o.m!=='w'&&mx>(o.f==='f'?16:10))?'landscape':'portrait',go=()=>printNow(pHTML(c,o),ori);if(o.img&&c.img&&!imgURL[c.img])imgBlob(c.img).then(go,go);else go();break}
+case 'prd':{const go=()=>printNow(dHTML(c));if(c.img&&!imgURL[c.img])imgBlob(c.img).then(go,go);else go();break}
 case 'cpd':showText('Liste des doubles',`Doubles — ${c.name} (${c.year})\n`+dbl(c).map(r=>`${r.s.name} #${r.x.n} ${r.x.m}${r.p==='Base'?'':' ['+r.p+']'} ×${r.e.q-1} (${r.e.c}) ${money(r.e.p)}`).join('\n'));break;
 case 'data':dlg(`<h3>Données</h3><p class="mut">Tout est sauvegardé dans ce navigateur. Utilise le bouton « Drive » en haut pour synchroniser avec Google Drive.</p><div class="bar"><button data-a="ej">Exporter en JSON</button><button data-a="et">Inventaire pour Google Sheets</button><button data-a="ij">Importer du JSON</button></div>`);break;
 case 'gd':dlg(`<h3>Google Drive</h3><p class="mut">Tes données sont enregistrées dans le dossier PiCards de ton Drive (fichier picards-data.json). L’app ne voit que les fichiers qu’elle a créés.</p><label class="f" for="cid">Client ID Google</label><input id="cid" value="${esc(ls('picards.cid')||'')}" placeholder="…apps.googleusercontent.com"><div class="bar"><button class="p" data-a="gdc">Connecter / synchroniser</button><button data-a="gdx">Déconnecter</button></div>`);break;
@@ -225,7 +239,7 @@ case 'qm':case 'qp':{const e=c.own[d.k];if(!e)break;e.q=Math.max(1,e.q+(d.a==='q
 case 'ej':showText('Sauvegarde JSON',JSON.stringify(db));break;
 case 'et':{const L=[['Collection','Année','Sous-série','#','Nom','Parallèle','Qté','Condition','Prix','Valeur'].join('\t')];db.cols.forEach(c=>entries(c).forEach(r=>L.push([c.name,c.year,r.s.name,r.x.n,r.x.m,r.p,r.e.q,r.e.c,r.e.p,(r.e.q*r.e.p).toFixed(2)].join('\t'))));showText('Colle ceci dans Google Sheets',L.join('\n'));break}
 case 'ij':dlg(`<h3>Importer du JSON</h3><textarea id="ti" placeholder="Colle ici une sauvegarde JSON"></textarea><div class="bar"><button class="p" data-a="ij2">Remplacer mes données</button></div>`);break;
-case 'ij2':try{const o=JSON.parse($('#ti').value);if(!Array.isArray(o.cols))throw 0;db=o;cur=null;db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=MINP))e.p=MINP}));save();$('#dlg').close();render();toast('Données importées')}catch(x){toast('JSON invalide')}break;
+case 'ij2':try{const o=JSON.parse($('#ti').value);if(!Array.isArray(o.cols))throw 0;db=o;cur=null;db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=0))e.p=MINP}));save();$('#dlg').close();render();toast('Données importées')}catch(x){toast('JSON invalide')}break;
 }});
 document.addEventListener('change',e=>{const t=e.target,d=t.dataset,c=col();if(!c)return;
 if(d.k){if(t.checked)c.own[d.k]={q:1,c:'NM',p:MINP};else{delete c.own[d.k];const s=t.nextElementSibling;if(s)s.remove()}save();renderList();$('#stat').textContent=`${entries(c).length} / ${total(c)} cases cochées`}
@@ -239,8 +253,8 @@ else if(d.q){const v=Math.max(0,parseInt(t.value)||0);if(!v){delete c.own[d.q];s
 else if(d.cd){c.own[d.cd].c=t.value;save()}
 else if(d.pn!==undefined){const S=c.subs[+d.si],i=+d.pn,old=S.pars[i],v=t.value.trim();if(!v||v==='Base'||(v!==old&&S.pars.includes(v))){toast('Nom invalide ou déjà utilisé');render();return}if(v!==old){if(c.goal&&c.goal[S.name+'|'+old]){delete c.goal[S.name+'|'+old];c.goal[S.name+'|'+v]=1}if(c.pcol&&c.pcol[old]&&!c.pcol[v])c.pcol[v]=c.pcol[old];S.pars[i]=v;const ids=new Set(c.cards.filter(x=>x.s===S.name).map(x=>x.id));Object.keys(c.own).forEach(k=>{const j=k.indexOf('|');if(ids.has(k.slice(0,j))&&k.slice(j+1)===old){c.own[k.slice(0,j+1)+v]=c.own[k];delete c.own[k]}});save();toast('Parallèle renommé')}}
 else if(d.sn!==undefined){const s=c.subs[+d.sn],v=t.value.trim();if(!v||(v!==s.name&&c.subs.some(z=>z.name===v))){toast('Nom invalide ou déjà utilisé');render();return}if(c.goal)Object.keys(c.goal).forEach(k=>{if(k.startsWith(s.name+'|')){c.goal[v+k.slice(s.name.length)]=1;delete c.goal[k]}});c.cards.forEach(x=>{if(x.s===s.name)x.s=v});s.name=v;save();render();toast('Sous-série renommée')}
-else if(d.pr){const v=Math.max(MINP,parseFloat(t.value)||MINP);t.value=v;c.own[d.pr].p=v;save();$('#tot').textContent=tot(c);updGroups(c)}});
-db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=MINP))e.p=MINP}));persist();
+else if(d.pr){let v=parseFloat(t.value);if(!(v>=0))v=c.own[d.pr].p;t.value=v;c.own[d.pr].p=v;save();$('#tot').textContent=tot(c);updGroups(c)}});
+db.cols.forEach(mig);db.cols.forEach(c=>Object.values(c.own||{}).forEach(e=>{if(!(e.p>=0))e.p=MINP}));persist();
 const SC='https://www.googleapis.com/auth/drive.file',DV='https://www.googleapis.com/drive/v3/files',UP='https://www.googleapis.com/upload/drive/v3/files';
 let tok=null,tokExp=0,gdT=null,gdBusy=false,gdFile=ls('picards.gd.file'),gdRem=null;
 const gdOn=()=>ls('picards.gd')==='1';
@@ -328,9 +342,9 @@ document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.clo
 document.addEventListener('dragover',e=>{const r=e.target.closest&&e.target.closest('.sp[data-si]');if(dragS===null||!r)return;e.preventDefault();document.querySelectorAll('.sp.over').forEach(z=>z.classList.remove('over'));if(+r.dataset.si!==dragS)r.classList.add('over')});
 document.addEventListener('drop',e=>{const r=e.target.closest&&e.target.closest('.sp[data-si]');if(dragS===null||!r)return;e.preventDefault();const f=dragS;dragS=null;moveSub(col(),f,+r.dataset.si)});
 document.addEventListener('dragend',()=>{dragS=null;document.querySelectorAll('.sp.over').forEach(z=>z.classList.remove('over'))});
-const nrow=(n,p,o)=>`<div class="sp nr" data-o="${o}"><div class="pl"><input type="checkbox" class="nk" style="flex:none" checked aria-label="Inclure"><input class="nn2" value="${esc(n)}" placeholder="Nom de la sous-série" aria-label="Nom de la sous-série"></div><div class="pl in"><input class="np2" value="${esc(p)}" placeholder="Parallèles, séparés par des virgules" aria-label="Parallèles"></div></div>`;
+const nrow=(n,p,o,info='')=>`<div class="sp nr" data-o="${o}"><div class="pl"><input type="checkbox" class="nk" style="flex:none" checked aria-label="Inclure"><input class="nn2" value="${esc(n)}" placeholder="Nom de la sous-série" aria-label="Nom de la sous-série">${info?`<span class="mut" style="flex:none;font-size:12px">${info}</span>`:''}</div><div class="pl in"><input class="np2" value="${esc(p)}" placeholder="Parallèles, séparés par des virgules" aria-label="Parallèles"></div></div>`;
 const nextYear=y=>String(y).replace(/\d{4}/g,m=>+m+1).replace(/-(\d{2})$/,(m,a)=>'-'+String((+a+1)%100).padStart(2,'0'));
-function fillNew(id){const src=db.cols.find(x=>x.id===id),ns=$('#ns'),np=$('#np'),lb=document.querySelector('[for=np]');
+function fillNew(id){CK=null;if($('#nc'))$('#nc').value='';const src=db.cols.find(x=>x.id===id),ns=$('#ns'),np=$('#np'),lb=document.querySelector('[for=np]');
 np.style.display=lb.style.display=src?'none':'';
 if(!src){ns.innerHTML='';return}
 $('#nn').value=src.name;$('#ny').value=nextYear(src.year);$('#nb').value=src.brand;$('#nt').value=src.t;
@@ -363,7 +377,7 @@ const gtxt=g=>`· ${g.n} exemplaire(s) · ${money(g.v)}`;
 function updGroups(c){const G=sGroups(c);document.querySelectorAll('.sk .gh').forEach(h=>{const g=G.find(x=>x.key===h.dataset.gk);if(g)h.querySelector('.gs').textContent=gtxt(g)})}
 function stockTable(c){const G=sGroups(c);if(!G.length)return entries(c).length?'<p class="mut">Aucune ligne ne correspond aux filtres.</p>':'<p>Coche des cartes dans la checklist pour gérer leur stock.</p>';
 const par=sf.g==='p',cs=par?7:6;
-const ctrl=r=>{const lk=r.e.lk?'disabled':'',k=esc(r.k);return`<td><div class="st"><button data-a="qm" data-k="${k}" aria-label="Moins" ${r.e.q<=1||r.e.lk?'disabled':''}>−</button><input type="number" min="0" class="nm" data-q="${k}" value="${r.e.q}" ${lk}><button data-a="qp" data-k="${k}" aria-label="Plus" ${lk}>+</button></div></td><td><select data-cd="${k}" ${lk}>${CONDS.map(o=>`<option ${o===r.e.c?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="number" min=".25" step=".01" class="nm" data-pr="${k}" value="${r.e.p}" ${lk}></td>`};
+const ctrl=r=>{const lk=r.e.lk?'disabled':'',k=esc(r.k);return`<td><div class="st"><button data-a="qm" data-k="${k}" aria-label="Moins" ${r.e.q<=1||r.e.lk?'disabled':''}>−</button><input type="number" min="0" class="nm" data-q="${k}" value="${r.e.q}" ${lk}><button data-a="qp" data-k="${k}" aria-label="Plus" ${lk}>+</button></div></td><td><select data-cd="${k}" ${lk}>${CONDS.map(o=>`<option ${o===r.e.c?'selected':''}>${o}</option>`).join('')}</select></td><td><input type="number" min="0" step="any" class="nm" data-pr="${k}" value="${r.e.p}" ${lk}></td>`};
 const flat=r=>`<tr><td><span class="bt" style="background:${bcol(r.s.name)}">${esc(r.s.name)}</span></td><td>${esc(r.x.n)}</td><td>${esc(r.x.m)}${r.x.x?` <small>${esc(r.x.x)}</small>`:''}</td><td>${pill(c,r.p)}</td>${ctrl(r)}</tr>`;
 const nested=rows=>{const out=[];let i=0;while(i<rows.length){const x=rows[i].x,gr=[];while(i<rows.length&&rows[i].x.id===x.id)gr.push(rows[i++]);
 const b=gr.find(r=>r.p==='Base');
@@ -373,6 +387,26 @@ return`<table class="sk"><thead><tr>${par?'<th>Bloc</th>':''}<th>#</th><th>Joueu
 function vStock(c){if(sf.cid!==c.id)sf={g:sf.g,b:'',v:'',q:'',cid:c.id,col:{}};const V=[...new Set(c.subs.flatMap(z=>pars(c,z)))];
 return`${c.sets[c.si].src!=null?'<p class="mut">Set alimenté par les doubles de « '+esc((c.sets[c.sets[c.si].src]||{}).name)+' » : les lignes grisées sont en lecture seule et suivent ce set en direct.</p>':''}<p id="tot">${tot(c)}</p><div class="bar"><span class="sets" role="group" aria-label="Regroupement"><button data-a="sg" data-gm="b" class="${sf.g==='b'?'on':''}">Par bloc</button><button data-a="sg" data-gm="p" class="${sf.g==='p'?'on':''}">Par parallèle</button></span><select id="sf-b" aria-label="Bloc"><option value="">Bloc : tous</option>${c.subs.map(z=>`<option ${z.name===sf.b?'selected':''}>${esc(z.name)}</option>`).join('')}</select><select id="sf-v" aria-label="Version"><option value="">Version : toutes</option>${V.map(p=>`<option ${p===sf.v?'selected':''}>${esc(p)}</option>`).join('')}</select><input id="sf-q" type="search" placeholder="Rechercher (numéro, joueur…)" value="${esc(sf.q)}" aria-label="Rechercher"></div><p class="mut">Condition : M mint · NM near mint · EX · VG · G · P</p><div class="sc" id="sk">${stockTable(c)}</div>`}
 document.addEventListener('input',e=>{const t=e.target,c=col(),k={'sf-g':'g','sf-b':'b','sf-v':'v','sf-q':'q'}[t.id];if(!c||!k)return;sf[k]=t.value;const el=$('#sk');if(el)el.innerHTML=stockTable(c)});
+let CK=null;
+const CKON=()=>!!(CK&&$('#nc')&&$('#nc').value);
+async function loadCkIndex(){const el=$('#nck');if(!el)return;CK=null;
+try{const r=await fetch('checklists/index.json?'+Date.now());if(!r.ok)throw 0;const L=await r.json();if(!Array.isArray(L)||!L.length)throw 0;
+el.innerHTML=`<label class="f" for="nc">Checklist importée</label><select id="nc"><option value="">Aucune</option>${L.map(x=>`<option value="${esc(x.slug)}">${esc(x.title)} (${x.cards} cartes)</option>`).join('')}</select>`}
+catch(e){el.innerHTML='<p class="mut" style="margin:0 0 6px">Aucune checklist importée pour l’instant : lance le workflow « Importer une checklist » dans l’onglet Actions de ton dépôt GitHub.</p>'}}
+async function fillCk(slug){const ns=$('#ns'),np=$('#np'),lb=document.querySelector('[for=np]'),nf=$('#nf');
+if(!slug){CK=null;ns.innerHTML='';np.style.display=lb.style.display='';return}
+ns.innerHTML='<p class="mut">Chargement…</p>';
+try{const r=await fetch('checklists/'+encodeURIComponent(slug)+'.json?'+Date.now());if(!r.ok)throw 0;CK=await r.json()}catch(e){CK=null;ns.innerHTML='<p class="mut">Impossible de lire cette checklist.</p>';return}
+if(nf)nf.value='';np.style.display=lb.style.display='none';
+$('#nn').value=CK.name||CK.title;$('#ny').value=CK.year||'';$('#nb').value=CK.brand||'';$('#nt').value=CK.type||'autre';
+const tc=CK.blocks.reduce((a,b)=>a+b.cards.length,0);
+ns.innerHTML=`<p class="mut" style="margin:8px 0 2px">${CK.blocks.length} blocs, ${tc} cartes. Modifie les noms et les parallèles, décoche pour ne pas importer un bloc.</p>`+CK.blocks.map((b,i)=>nrow(b.name,b.parallels.map(p=>p.name).join(', '),i,`${b.cards.length} cartes${b.declared&&b.declared!==b.cards.length?` <b style="color:var(--red)">⚠ annoncé : ${b.declared}</b>`:''}`)).join('')}
+document.addEventListener('change',e=>{if(e.target.id==='nc')fillCk(e.target.value)});
+function importCk(base){const c2=mk({...base,pars:[]}),K=CK,xo=cd=>(cd.t||'')+(cd.f&&cd.f.length?(cd.t?' · ':'')+cd.f.join(' '):'');
+document.querySelectorAll('#ns .nr').forEach(r=>{if(!r.querySelector('.nk').checked)return;const nm=r.querySelector('.nn2').value.trim();if(!nm||c2.subs.some(z=>z.name===nm))return;
+const b=K.blocks[+r.dataset.o];c2.subs.push({name:nm,pars:[...new Set(r.querySelector('.np2').value.split(',').map(z=>z.trim()).filter(z=>z&&z!=='Base'))]});
+if(b)b.cards.forEach(cd=>c2.cards.push({id:uid(),n:cd.n,m:cd.m,x:xo(cd),s:nm}))});
+c2.srcCk={slug:K.slug,url:K.url,fetched:K.fetched};importCk.done=true}
 function fitCl(){const el=document.getElementById('cl');if(!el)return;const top=el.getBoundingClientRect().top+window.scrollY;el.style.maxHeight=Math.max(300,window.innerHeight-top-14)+'px'}
 window.addEventListener('resize',fitCl);
 let hlT=null,hlI=-1;
